@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* eac_dataGridView, SQL & C# Framework for windows forms DataGridView
+    Emmanuel Cardenaz - 2017-10-01
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,42 +14,43 @@ namespace EAC_Framework
 {
     class eac_dataGridView
     {
+        /**************Controls**************/
         DataGridView gridview;
         eac_sqlConnector sqlConn;
-        bool enable_autoUpdate;
+        /**************Names**************/
         string tableName;
+        /**************FLAGS**************/
+        bool in_newRow = false; //For new row added by user
+        bool enable_autoUpdate = true; //SQL AutoUpdate, 
+        bool enable_autoInsert = true; //SQL for Autoinsert
+
 
         public eac_dataGridView(ref DataGridView gridviews)
         {
             enable_autoUpdate = true;
-            gridview = gridviews; // Usig pointer for edit in form 
-            //For event CellClick
-            gridview.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(CellClickTest);
-            gridview.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(CellEndEditUpdateGrid);
+            gridview = gridviews; // Usig pointer for edit in form //For event CellClick
+            gridview.CellClick += new System.Windows.
+                Forms.DataGridViewCellEventHandler(onClick);
+            gridview.CellEndEdit += new System.Windows.Forms.
+                DataGridViewCellEventHandler(CellEndEditUpdateGrid);
             gridview.CellValueChanged += //It is for Paste from clipboard
                 new System.Windows.Forms.DataGridViewCellEventHandler(CellEndEditUpdateGrid); 
-            gridview.KeyDown += new System.Windows.Forms.KeyEventHandler(copyPaste_KeyDown);
-        }
-
-        public void fillDataGridTest()
-        {
-            gridview.ColumnCount = 1;
-            gridview.Columns[0].Name = "Prueba";
-            gridview.Rows.Add("Hola");
+            gridview.KeyDown += new System.Windows.Forms.
+                KeyEventHandler(copyPaste_KeyDown);
+            gridview.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(NewRowAddedByUser);
         }
 
         public void fillGridFromSqlSelect(string QuerySelect, ref eac_sqlConnector sqlConnector)
         {
             sqlConn = sqlConnector;
-            gridview.DataSource = null;
+            gridview.DataSource = null; 
             gridview.Rows.Clear();
             DataTable result = sqlConn.Select(QuerySelect);
             gridview.DataSource = result;
             tableName = result.TableName;
-            //MessageBox.Show(result.ToString());
         }
 
-        private void CellClickTest(object sender, DataGridViewCellEventArgs e)
+        private void onClick(object sender, DataGridViewCellEventArgs e)
         {
             //   MessageBox.Show("Works here");
         }
@@ -69,12 +73,25 @@ namespace EAC_Framework
                         sqlFields.Add(" [" + gridview.Columns[i].Name + "] = '" +
                             actualRow.Cells[i].Value.ToString() + "'");
                     }
-
                 }
                 queryUpdate += string.Join(" AND", sqlFields.ToArray());
                 sqlConn.Update(queryUpdate);
-                //                MessageBox.Show(queryUpdate);
+                //MessageBox.Show(queryUpdate);
             }
+        }
+
+        private void AutoInsert()
+        {
+           if (enable_autoInsert)
+            {
+             //CODE HERE FOR INSERTS>>>> 
+            }
+        }
+
+        private void NewRowAddedByUser(object sender, DataGridViewRowEventArgs e)
+        {
+            MessageBox.Show("NEW ROW ADDED");
+            in_newRow = true;
         }
 
         private void CopyToClipboard(object sender)
@@ -83,7 +100,6 @@ namespace EAC_Framework
             if (dataObj != null)
                 Clipboard.SetDataObject(dataObj);
         }
-
         private void PasteClipboard(object sender)
         {   
             //This code (Copy Paste) is no my own.  But i no remember the Blog, i will reference this... 
@@ -148,7 +164,6 @@ namespace EAC_Framework
                 return;
             }
         }
-
         private void copyPaste_KeyDown(object sender, KeyEventArgs e)
         {
             try
@@ -172,6 +187,5 @@ namespace EAC_Framework
                 MessageBox.Show("Copy/paste operation failed. " + ex.Message, "Copy/Paste", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
     }
 }

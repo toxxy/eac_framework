@@ -26,6 +26,15 @@ namespace EAC_Framework
             "Password=" + password + ";";
         }
 
+        public void Insert(string query)
+        {
+            //Maybe we can use Update Metod
+            conn.Open();
+            SqlCommand exec = new SqlCommand(query, conn);
+            exec.ExecuteNonQuery();
+            conn.Close();
+        }
+
         public void Update(string query)
         {
             conn.Open();
