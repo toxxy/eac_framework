@@ -17,17 +17,19 @@ namespace EAC_Framework
         /**************Controls**************/
         DataGridView gridview;
         eac_sqlConnector sqlConn;
-        /**************Names**************/
+        /***************Names***************/
         string tableName;
-        /**************FLAGS**************/
+        int lastRowSelected;
+        /***SYSTEM*******FLAGS**************/
         bool in_newRow = false; //For new row added by user
-        bool enable_autoUpdate = true; //SQL AutoUpdate, 
-        bool enable_autoInsert = true; //SQL for Autoinsert
+        /******USER*****FLAGS***************/
+        static bool enable_autoUpdate; //SQL AutoUpdate, 
+        static bool enable_autoInsert; //SQL for Autoinsert
 
 
         public eac_dataGridView(ref DataGridView gridviews)
         {
-            enable_autoUpdate = true;
+            enable_autoInsert = true;enable_autoUpdate = true;
             gridview = gridviews; // Usig pointer for edit in form //For event CellClick
             gridview.CellClick += new System.Windows.
                 Forms.DataGridViewCellEventHandler(onClick);
@@ -38,6 +40,16 @@ namespace EAC_Framework
             gridview.KeyDown += new System.Windows.Forms.
                 KeyEventHandler(copyPaste_KeyDown);
             gridview.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(NewRowAddedByUser);
+            gridview.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(RowLeaved);
+        }
+
+        public void setAutoUpdate(bool value)
+        {
+            enable_autoUpdate = value;
+        }
+        public void setAutoInsert(bool value)
+        {
+            enable_autoInsert = value;
         }
 
         public void fillGridFromSqlSelect(string QuerySelect, ref eac_sqlConnector sqlConnector)
@@ -69,8 +81,8 @@ namespace EAC_Framework
                 for (int i = 0; i < gridview.Columns.Count; i++)
                 {
                     if (i != idx)
-                    {
-                        sqlFields.Add(" [" + gridview.Columns[i].Name + "] = '" +
+                    {//Changed equal per like , is more generic
+                        sqlFields.Add(" [" + gridview.Columns[i].Name + "] like '" +
                             actualRow.Cells[i].Value.ToString() + "'");
                     }
                 }
@@ -80,18 +92,40 @@ namespace EAC_Framework
             }
         }
 
-        private void AutoInsert()
+        private void AutoInsert(object sender,int rowIndex)
         {
-           if (enable_autoInsert)
+            string queryInsert = "INSERT INTO " + tableName +" (";
+            if (enable_autoInsert)
             {
-             //CODE HERE FOR INSERTS>>>> 
+                
+                DataGridViewRow actualRow = gridview.Rows[rowIndex];
+                List<string> sqlFieldsNames = new List<string>();
+                List<string> sqlFieldsValues = new List<string>();
+
+                for (int i = 0; i < gridview.Columns.Count; i++)
+                {
+                    sqlFieldsNames.Add("[" + gridview.Columns[i].Name + "]");
+                    sqlFieldsValues.Add("'"+actualRow.Cells[i].Value.ToString()+"'");
+                }
+                queryInsert += string.Join(",", sqlFieldsNames.ToArray()) +") VALUES(";
+                queryInsert += string.Join(",", sqlFieldsValues.ToArray()) + ")";
+                sqlConn.Update(queryInsert);
+                // -- MessageBox.Show(queryInsert);
             }
         }
 
         private void NewRowAddedByUser(object sender, DataGridViewRowEventArgs e)
         {
-            MessageBox.Show("NEW ROW ADDED");
             in_newRow = true;
+        }
+
+        private void RowLeaved(object sender, DataGridViewCellEventArgs e)
+        {
+            if (in_newRow)
+            {
+                AutoInsert(sender, gridview.CurrentCell.RowIndex);
+                in_newRow = false;
+            }
         }
 
         private void CopyToClipboard(object sender)
