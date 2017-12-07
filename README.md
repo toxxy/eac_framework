@@ -1,10 +1,12 @@
-## Welcome to GitHub Pages
+## Simple example 
 
-You can use the [editor on GitHub](https://github.com/toxxy/eac_framework/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+connection = new EAC_Framework.eac_sqlConnector("Server", "dataBase", "Table", "User", "Password");
+gridView = new EAC_Framework.eac_dataGridView(ref dataGridView1) 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+note: dataGridView1 is your object in C# 
 
-### Markdown
+# Methods  
+
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
