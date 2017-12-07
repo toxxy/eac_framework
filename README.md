@@ -5,7 +5,8 @@ connection = new EAC_Framework.eac_sqlConnector("Server", "dataBase", "Table", "
 gridView = new EAC_Framework.eac_dataGridView(ref dataGridView1); 
 gridView.fillGridFromSqlSelect("YOUR QUERY HERE",ref connection);
 ```
-note: dataGridView1 is your object in C# 
+Note: dataGridView1 is your object in C#  
+Note2: Table can be empty like "" 
 # Methods  
 
 ## setAutoInsert(bool)
