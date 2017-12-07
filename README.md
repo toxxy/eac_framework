@@ -2,11 +2,10 @@
 
 ```markdown
 connection = new EAC_Framework.eac_sqlConnector("Server", "dataBase", "Table", "User", "Password");
-
-gridView = new EAC_Framework.eac_dataGridView(ref dataGridView1) 
-
-note: dataGridView1 is your object in C# 
+gridView = new EAC_Framework.eac_dataGridView(ref dataGridView1); 
+gridView.fillGridFromSqlSelect("YOUR QUERY HERE",ref connection);
 ```
+note: dataGridView1 is your object in C# 
 # Methods  
 
 
