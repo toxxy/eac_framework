@@ -42,6 +42,14 @@ namespace EAC_Framework
             exec.ExecuteNonQuery();
             conn.Close();
         }
+
+        public void Query(string query)
+        {
+            conn.Open();
+            SqlCommand exec = new SqlCommand(query, conn);
+            exec.ExecuteNonQuery();
+            conn.Close();
+        }
         public DataTable Select(string query)
         {
             DataTable result = new DataTable();
