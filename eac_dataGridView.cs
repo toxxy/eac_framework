@@ -15,22 +15,21 @@ namespace EAC_Framework
     class eac_dataGridView
     {
         /**************Controls**************/
-        DataGridView gridview;
-        eac_sqlConnector sqlConn;
+        private DataGridView gridview;
+        private eac_sqlConnector sqlConn;
         /***************Names***************/
-        string tableName;
-        int lastRowSelected;
+        private string tableName;
+        private int lastRowSelected;
         /***SYSTEM*******FLAGS**************/
-        bool in_newRow = false; //For new row added by user
+        private bool in_newRow = false; //For new row added by user
         /******USER*****FLAGS***************/
-        static bool enable_autoUpdate; //SQL AutoUpdate, 
-        static bool enable_autoInsert; //SQL for Autoinsert
+        private bool enable_autoUpdate; //SQL AutoUpdate, 
+        private bool enable_autoInsert; //SQL for Autoinsert
 
 
         public eac_dataGridView(ref DataGridView gridviews,ref eac_sqlConnector sqlConnector)
         {
             sqlConn = sqlConnector; 
-            enable_autoInsert = true; enable_autoUpdate = true;
             gridview = gridviews; // Usig pointer for edit in form //For event CellClick
             gridview.CellClick += new System.Windows.
                 Forms.DataGridViewCellEventHandler(onClick);
@@ -48,7 +47,7 @@ namespace EAC_Framework
         {
             enable_autoUpdate = value;
         }
-        public void setAutoInsert(bool value)
+        public  void setAutoInsert(bool value)
         {
             enable_autoInsert = value;
         }
@@ -103,6 +102,7 @@ namespace EAC_Framework
                 List<string> sqlFieldsNames = new List<string>();
                 List<string> sqlFieldsValues = new List<string>();
 
+               
                 for (int i = 0; i < gridview.Columns.Count; i++)
                 {
                     sqlFieldsNames.Add("[" + gridview.Columns[i].Name + "]");
