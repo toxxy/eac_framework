@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using System.Data;
 using System.Text.RegularExpressions;
 
+//SAMPLE
+
 namespace EAC_Framework
 {
     class eac_sqlConnector
